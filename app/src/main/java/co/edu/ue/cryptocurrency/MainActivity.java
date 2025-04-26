@@ -18,14 +18,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         db = new DatabaseHelper(this);
+        this.begin();
+        this.loginAPP();
+        btnGoToRegister.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, RegisterActivity.class));
+        });
+    }
 
-        etEmail = findViewById(R.id.etEmail);
-        etPassword = findViewById(R.id.etPassword);
-        btnLogin = findViewById(R.id.btnLogin);
-        btnGoToRegister = findViewById(R.id.btnGoToRegister);
-
+    private void loginAPP() {
         btnLogin.setOnClickListener(v -> {
             String email = etEmail.getText().toString();
             String password = etPassword.getText().toString();
@@ -46,8 +47,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnGoToRegister.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, RegisterActivity.class));
-        });
+
+    }
+
+    private void begin() {
+        etEmail = findViewById(R.id.etEmail);
+        etPassword = findViewById(R.id.etPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+        btnGoToRegister = findViewById(R.id.btnGoToRegister);
     }
 }
