@@ -9,6 +9,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,7 +46,8 @@ public class DashboardActivity extends AppCompatActivity {
     }
 
     private void fetchCryptoPrices() {
-        String url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,solana&vs_currencies=usd";
+        // Modifica la URL para obtener los precios de las 10 principales criptomonedas
+        String url = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1";
 
         Request request = new Request.Builder()
                 .url(url)
@@ -69,28 +72,42 @@ public class DashboardActivity extends AppCompatActivity {
                 }
 
                 try {
-                    final String responseData = response.body() != null ? response.body().string() : "{}";
-                    JSONObject json = new JSONObject(responseData);
+                    final String responseData = response.body() != null ? response.body().string() : "[]";
+                    JSONArray jsonArray = new JSONArray(responseData);
 
                     runOnUiThread(() -> {
-                        try {
-                            double btcPrice = json.getJSONObject("bitcoin").getDouble("usd");
-                            double ethPrice = json.getJSONObject("ethereum").getDouble("usd");
-                            double solPrice = json.getJSONObject("solana").getDouble("usd");
+                        StringBuilder cryptoPricesText = new StringBuilder("Precios Actuales:\n\n");
 
-                            String text = "Precios Actuales:\n\n" +
-                                    "Bitcoin (BTC): $" + btcPrice + "\n" +
-                                    "Ethereum (ETH): $" + ethPrice + "\n" +
-                                    "Solana (SOL): $" + solPrice;
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject crypto = null;
+                            try {
+                                crypto = jsonArray.getJSONObject(i);
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                            String name = null;
+                            try {
+                                name = crypto.getString("name");
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
+                            double price = 0;
+                            try {
+                                price = crypto.getDouble("current_price");
+                            } catch (JSONException e) {
+                                throw new RuntimeException(e);
+                            }
 
-                            tvCryptoPrices.setText(text);
-                        } catch (Exception e) {
-                            Log.e("DashboardActivity", "Error parsing JSON", e);
-                            tvCryptoPrices.setText("Error al mostrar precios");
+                            cryptoPricesText.append(name)
+                                    .append(": $")
+                                    .append(price)
+                                    .append("\n");
                         }
+
+                        tvCryptoPrices.setText(cryptoPricesText.toString());
                     });
                 } catch (Exception e) {
-                    Log.e("DashboardActivity", "Error processing response", e);
+                    Log.e("DashboardActivity", "Error parsing JSON", e);
                     runOnUiThread(() ->
                             Toast.makeText(DashboardActivity.this, "Error procesando datos", Toast.LENGTH_SHORT).show()
                     );
