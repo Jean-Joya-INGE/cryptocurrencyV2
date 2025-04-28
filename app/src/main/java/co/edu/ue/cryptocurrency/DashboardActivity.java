@@ -43,6 +43,13 @@ public class DashboardActivity extends AppCompatActivity {
             startActivity(new Intent(DashboardActivity.this, MainActivity.class));
             finish();
         });
+        Button btnViewPortfolio = findViewById(R.id.btnViewPortfolio);
+        btnViewPortfolio.setOnClickListener(v -> {
+            // Necesitas pasar el ID del usuario actual
+            Intent intent = new Intent(DashboardActivity.this, PortfolioActivity.class);
+            intent.putExtra("USER_ID", 1); // Reemplaza con el ID real del usuario
+            startActivity(intent);
+        });
     }
 
     private void fetchCryptoPrices() {
@@ -56,18 +63,23 @@ public class DashboardActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.e("API_ERROR", "Error al obtener datos: " + e.getMessage());
-                runOnUiThread(() ->
-                        Toast.makeText(DashboardActivity.this, "Error al cargar precios", Toast.LENGTH_SHORT).show()
-                );
+                runOnUiThread(() -> {
+                    Toast.makeText(DashboardActivity.this,
+                            "Error de conexión. Verifica tu internet",
+                            Toast.LENGTH_LONG).show();
+                    tvCryptoPrices.setText("No se pudieron cargar los precios");
+                });
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    runOnUiThread(() ->
-                            Toast.makeText(DashboardActivity.this, "Error en la respuesta del servidor", Toast.LENGTH_SHORT).show()
-                    );
+                    runOnUiThread(() -> {
+                        Toast.makeText(DashboardActivity.this,
+                                "Error del servidor: " + response.code(),
+                                Toast.LENGTH_LONG).show();
+                        tvCryptoPrices.setText("Error al obtener datos");
+                    });
                     return;
                 }
 

@@ -35,6 +35,15 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(RegisterActivity.this, "Todos los campos son obligatorios", Toast.LENGTH_SHORT).show();
                 return;
             }
+            if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                etEmail.setError("Email inválido");
+                return;
+            }
+
+            if (password.length() < 6) {
+                etPassword.setError("La contraseña debe tener al menos 6 caracteres");
+                return;
+            }
 
             try {
                 String hashedPassword = HashUtils.sha256(password);
