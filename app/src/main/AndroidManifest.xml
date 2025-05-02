@@ -19,7 +19,7 @@
 
         <!-- Actividad principal -->
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,15 +29,15 @@
 
         <!-- Actividad de Registro -->
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activities.RegisterActivity"
             android:exported="false" />
 
         <!-- Actividad del Dashboard -->
         <activity
-            android:name=".DashboardActivity"
+            android:name=".activities.DashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".PortfolioActivity"
+            android:name=".activities.PortfolioActivity"
             android:exported="false" />
 
     </application>

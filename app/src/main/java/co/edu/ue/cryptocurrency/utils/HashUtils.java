@@ -1,4 +1,4 @@
-package co.edu.ue.cryptocurrency;
+package co.edu.ue.cryptocurrency.utils;
 
 
 import java.security.MessageDigest;
